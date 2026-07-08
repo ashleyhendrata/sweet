@@ -128,10 +128,10 @@ export default function ItemForm({
           <input
             name="critical_level"
             type="number"
-            min={0}
+            min={1}
             step="any"
-            required
-            defaultValue={item?.critical_level ?? 0}
+            placeholder="none"
+            defaultValue={item?.critical_level ?? ""}
             className={inputClass}
           />
         </div>
@@ -149,6 +149,11 @@ export default function ItemForm({
           />
         </div>
       </div>
+
+      <p className="text-xs text-neutral-500">
+        Leave <span className="font-medium">Critical</span> blank if the item
+        never needs reorder alerts.
+      </p>
 
       <div className="flex gap-2 pt-1">
         <button

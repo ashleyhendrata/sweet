@@ -55,7 +55,7 @@ export default function CountScreen({
   const meta = useMemo(() => {
     const m = new Map<
       string,
-      { critical_level: number; name: string; unit: string }
+      { critical_level: number | null; name: string; unit: string }
     >();
     for (const g of groups)
       for (const it of g.items)
@@ -68,11 +68,13 @@ export default function CountScreen({
   }, [groups]);
 
   // Count of items currently at/below their critical level (ignores search).
+  // Items with no critical level set are never counted.
   const lowCount = useMemo(() => {
     let n = 0;
     for (const [id, qty] of Object.entries(quantities)) {
       const info = meta.get(id);
-      if (info && qty <= info.critical_level) n++;
+      if (info && isLow({ current_qty: qty, critical_level: info.critical_level }))
+        n++;
     }
     return n;
   }, [quantities, meta]);
@@ -99,6 +101,12 @@ export default function CountScreen({
       <header className="flex items-center justify-between px-4 py-3">
         <h1 className="text-lg font-bold text-neutral-900">Inventory</h1>
         <div className="flex items-center gap-1">
+          <Link
+            href="/report"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          >
+            Report
+          </Link>
           <Link
             href="/items"
             className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
@@ -224,7 +232,9 @@ export default function CountScreen({
                               )}
                             </div>
                             <div className="text-xs text-neutral-500">
-                              {item.unit} · critical {item.critical_level}
+                              {item.unit}
+                              {item.critical_level != null &&
+                                ` · critical ${item.critical_level}`}
                             </div>
                           </div>
 

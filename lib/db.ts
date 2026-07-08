@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { isLow } from "@/lib/types";
 import type {
   Category,
   CategoryWithItems,
@@ -112,13 +113,10 @@ export async function getArchivedItems(): Promise<ItemWithCategory[]> {
   return (data ?? []).map(flatten);
 }
 
-/** Non-archived items that are at or below their critical level. */
+/** Non-archived items that have a critical level and are at or below it. */
 export async function getLowItems(): Promise<ItemWithCategory[]> {
-  // The "current_qty <= critical_level" comparison is done via a view so the
-  // rule stays in the database. Fall back to filtering in code if the view is
-  // absent, keeping the app resilient during setup.
   const items = await getItems();
-  return items.filter((i) => i.current_qty <= i.critical_level);
+  return items.filter(isLow);
 }
 
 /** Non-archived items grouped under their category, in display order. */
@@ -156,7 +154,7 @@ export async function createItem(input: {
   name: string;
   category_id: string;
   unit: string;
-  critical_level: number;
+  critical_level: number | null;
   current_qty?: number;
 }): Promise<Item> {
   const supabase = await createClient();

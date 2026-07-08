@@ -60,7 +60,8 @@ export default function ItemRow({
           )}
         </div>
         <div className="text-xs text-neutral-500">
-          {item.current_qty} {item.unit} · critical {item.critical_level}
+          {item.current_qty} {item.unit}
+          {item.critical_level != null && ` · critical ${item.critical_level}`}
         </div>
       </div>
 

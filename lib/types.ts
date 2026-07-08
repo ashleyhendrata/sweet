@@ -13,7 +13,9 @@ export type Item = {
   name: string;
   category_id: string;
   unit: string;
-  critical_level: number;
+  // null = no reorder threshold set; the item is never flagged low. Must be >= 1
+  // when set (a critical level of 0 is meaningless).
+  critical_level: number | null;
   current_qty: number;
   archived: boolean;
   created_at: string;
@@ -30,8 +32,11 @@ export type CategoryWithItems = Category & {
   items: Item[];
 };
 
-// An item is "low" (needs reordering) when on-hand quantity is at or below its
-// critical level. Kept as a single helper so the rule lives in exactly one place.
-export function isLow(item: Pick<Item, "current_qty" | "critical_level">): boolean {
-  return item.current_qty <= item.critical_level;
+// An item is "low" (needs reordering) when it has a critical level set and its
+// on-hand quantity is at or below it. Items with no critical level (null) are
+// never low. Kept as a single helper so the rule lives in exactly one place.
+export function isLow(
+  item: Pick<Item, "current_qty" | "critical_level">,
+): boolean {
+  return item.critical_level != null && item.current_qty <= item.critical_level;
 }

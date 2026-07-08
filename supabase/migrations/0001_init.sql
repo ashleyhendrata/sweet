@@ -20,7 +20,8 @@ create table if not exists public.items (
   name           text not null,
   category_id    uuid not null references public.categories (id) on delete restrict,
   unit           text not null default 'units',
-  critical_level numeric not null default 0 check (critical_level >= 0),
+  -- null = no reorder threshold (item is never flagged low); >= 1 when set.
+  critical_level numeric check (critical_level is null or critical_level >= 1),
   current_qty    numeric not null default 0 check (current_qty >= 0),
   archived       boolean not null default false,
   created_at     timestamptz not null default now(),

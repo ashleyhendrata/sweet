@@ -19,3 +19,309 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+/* ==========================================================================
+   Print report (/report)
+   A paper-like sheet on screen; a clean black-on-white document in print.
+   Serif headings + a clean sans body give it a document (not data-dump) feel.
+   ========================================================================== */
+
+:root {
+  --report-ink: #16130f;
+  --report-muted: #5b5751;
+  --report-rule: #d9d5cf;
+  --report-serif: Georgia, "Times New Roman", "Nimbus Roman", serif;
+}
+
+.report-sheet {
+  width: 100%;
+  max-width: 8.25in;
+  margin: 24px auto;
+  padding: 0.85in 0.8in 0.7in;
+  background: #ffffff;
+  color: var(--report-ink);
+  line-height: 1.45;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Header --- */
+.report-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.report-title {
+  font-family: var(--report-serif);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.report-location {
+  font-size: 15px;
+  color: var(--report-muted);
+  margin: 6px 0 0;
+}
+.report-summary {
+  font-size: 12px;
+  color: var(--report-muted);
+  margin: 2px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+.report-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--report-rule);
+  font-size: 13px;
+  color: var(--report-ink);
+  text-align: left;
+}
+.report-meta .counted-by {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.report-meta .blank {
+  display: inline-block;
+  width: 190px;
+  height: 1em;
+  border-bottom: 1px solid #9a958d;
+}
+
+/* --- Section headings --- */
+.section-title {
+  font-family: var(--report-serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 30px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--report-ink);
+}
+
+.all-good {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  font-size: 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #166534;
+}
+
+/* --- Tables --- */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.report-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--report-muted);
+  padding: 6px 12px;
+  border-bottom: 1.5px solid var(--report-ink);
+}
+.report-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid #ececec;
+  vertical-align: baseline;
+}
+.report-table .item-name {
+  font-weight: 500;
+}
+.report-table .num {
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Needs Ordering callout — red-tinted to echo the app's REORDER badges */
+.needs-ordering-wrap {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 4px 14px 8px;
+}
+.needs-ordering-wrap .report-table th {
+  border-bottom-color: #f0a8a8;
+}
+.needs-ordering-wrap .report-table td {
+  border-bottom-color: #f6d5d5;
+}
+.needs-ordering-wrap .report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Full inventory */
+.category-block {
+  margin-top: 18px;
+}
+.category-title {
+  font-family: var(--report-serif);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+.report-table tbody tr.zebra {
+  background: #f7f6f4;
+}
+.report-table tbody tr.low td {
+  color: #b91c1c;
+}
+.reorder-tag {
+  margin-left: 8px;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #b91c1c;
+}
+
+/* Fixed column widths so Count and Unit line up straight down across every
+   per-category table in the Full Inventory section. */
+.inv-table {
+  table-layout: fixed;
+}
+.inv-table th:nth-child(1),
+.inv-table td:nth-child(1) {
+  width: 58%;
+}
+.inv-table th:nth-child(2),
+.inv-table td:nth-child(2) {
+  width: 16%;
+}
+.inv-table th:nth-child(3),
+.inv-table td:nth-child(3) {
+  width: 26%;
+}
+
+/* A short instruction under a section heading */
+.report-note {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--report-muted);
+}
+
+
+.report-footer {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px solid var(--report-rule);
+  font-size: 11px;
+  color: #9a958d;
+  text-align: center;
+}
+
+/* Keep a group (header block, needs-ordering, each category) from splitting
+   across a page boundary where it can be avoided. */
+.avoid-break {
+  break-inside: avoid;
+}
+
+/* ==========================================================================
+   Print rules
+   ========================================================================== */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+  }
+  /* Force backgrounds (zebra, highlight) to render in the PDF without the user
+     having to toggle "Background graphics". */
+  body * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .report-sheet {
+    max-width: none;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  /* Don't strand a heading at the bottom of a page. */
+  .section-title,
+  .category-title {
+    break-after: avoid;
+  }
+  .report-table thead {
+    /* Repeat column headers if a table spans pages. */
+    display: table-header-group;
+  }
+
+  /* Full report only: shrink type + tighten spacing so it prints on fewer
+     pages. The screen keeps its comfortable sizing (this is print-only). The
+     blank checklist is intentionally left roomy (staff write in it). */
+  .print-compact .report-title {
+    font-size: 22px;
+  }
+  .print-compact .report-location {
+    font-size: 11.5px;
+  }
+  .print-compact .report-summary {
+    font-size: 10px;
+  }
+  .print-compact .report-header {
+    margin-bottom: 2px;
+  }
+  .print-compact .report-meta {
+    margin-top: 8px;
+    padding-top: 6px;
+    font-size: 11px;
+  }
+  .print-compact .section-title {
+    font-size: 15px;
+    margin: 14px 0 6px;
+  }
+  .print-compact .report-note {
+    font-size: 9px;
+    margin-bottom: 5px;
+  }
+  .print-compact .category-block {
+    margin-top: 9px;
+  }
+  .print-compact .category-title {
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+  .print-compact .report-table {
+    font-size: 10px;
+  }
+  .print-compact .report-table th {
+    font-size: 8.5px;
+    padding: 2.5px 8px;
+  }
+  .print-compact .report-table td {
+    padding: 2.5px 8px;
+  }
+  .print-compact .needs-ordering-wrap {
+    padding: 2px 10px 4px;
+  }
+  .print-compact .report-footer {
+    margin-top: 14px;
+    font-size: 10px;
+  }
+
+  /* Blank checklist: compacted like the report (fewer pages), but rows stay
+     tall enough to hand-write a count/note in. Placed after the .print-compact
+     rule so it wins on equal specificity. */
+  .print-blank .report-table td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+

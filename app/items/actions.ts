@@ -27,6 +27,15 @@ function num(formData: FormData, key: string): number {
   return Number.isFinite(n) && n >= 0 ? n : 0;
 }
 
+// Critical level is optional. Blank (or anything below 1) means "no reorder
+// threshold" — stored as null so the item is never flagged low.
+function criticalLevel(formData: FormData): number | null {
+  const raw = String(formData.get("critical_level") ?? "").trim();
+  if (raw === "") return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 1 ? n : null;
+}
+
 /**
  * Resolve the chosen category. The item form's dropdown includes an inline
  * "New category…" option (value `__new__`); when picked, we create the category
@@ -56,7 +65,7 @@ export async function addItem(formData: FormData): Promise<void> {
     name,
     category_id,
     unit: str(formData, "unit") || "units",
-    critical_level: num(formData, "critical_level"),
+    critical_level: criticalLevel(formData),
     current_qty: num(formData, "current_qty"),
   });
   revalidate();
@@ -73,7 +82,7 @@ export async function editItem(formData: FormData): Promise<void> {
     name,
     category_id,
     unit: str(formData, "unit") || "units",
-    critical_level: num(formData, "critical_level"),
+    critical_level: criticalLevel(formData),
     current_qty: num(formData, "current_qty"),
   });
   revalidate();
