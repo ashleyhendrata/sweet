@@ -87,13 +87,18 @@ export async function updateCategory(
 // Items — reads
 // ---------------------------------------------------------------------------
 
-/** All non-archived items with their category name, ordered for display. */
+/**
+ * All non-archived items with their category name. Ordered by each item's
+ * manual sort_order within its category (name as a tiebreak), so the order set
+ * on the Manage screen carries through to the count screen and report.
+ */
 export async function getItems(): Promise<ItemWithCategory[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("items")
     .select(ITEM_WITH_CATEGORY)
     .eq("archived", false)
+    .order("sort_order", { ascending: true })
     .order("name", { ascending: true })
     .returns<ItemRow[]>();
   if (error) throw error;
@@ -158,6 +163,16 @@ export async function createItem(input: {
   current_qty?: number;
 }): Promise<Item> {
   const supabase = await createClient();
+  // Append new items to the end of their category's manual order.
+  const { data: last } = await supabase
+    .from("items")
+    .select("sort_order")
+    .eq("category_id", input.category_id)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const sort_order = (last?.sort_order ?? 0) + 1;
+
   const { data, error } = await supabase
     .from("items")
     .insert({
@@ -166,6 +181,7 @@ export async function createItem(input: {
       unit: input.unit,
       critical_level: input.critical_level,
       current_qty: input.current_qty ?? 0,
+      sort_order,
     })
     .select("*")
     .single();
@@ -176,7 +192,15 @@ export async function createItem(input: {
 export async function updateItem(
   id: string,
   patch: Partial<
-    Pick<Item, "name" | "category_id" | "unit" | "critical_level" | "current_qty">
+    Pick<
+      Item,
+      | "name"
+      | "category_id"
+      | "unit"
+      | "critical_level"
+      | "current_qty"
+      | "sort_order"
+    >
   >,
 ): Promise<Item> {
   const supabase = await createClient();

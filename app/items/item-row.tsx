@@ -5,6 +5,7 @@ import ItemForm from "./item-form";
 import {
   archiveItemAction,
   deleteItemAction,
+  moveItem,
   restoreItemAction,
 } from "./actions";
 import { useEdit } from "./edit-context";
@@ -20,15 +21,23 @@ export default function ItemRow({
   categories,
   units,
   archived = false,
+  isFirst = false,
+  isLast = false,
 }: {
   item: Item;
   categories: Category[];
   units: string[];
   archived?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   const { editingId, setEditingId } = useEdit();
   const editing = editingId === item.id;
   const [pending, startTransition] = useTransition();
+
+  function onMove(direction: "up" | "down") {
+    startTransition(() => moveItem(item.id, direction));
+  }
 
   if (editing) {
     return (
@@ -66,8 +75,30 @@ export default function ItemRow({
   }
 
   return (
-    <li className="flex items-center justify-between gap-3 border-t border-neutral-100 px-4 py-2.5">
-      <div className="min-w-0">
+    <li className="flex items-center gap-2 border-t border-neutral-100 px-3 py-2.5">
+      {!archived && (
+        <div className="flex shrink-0 items-center">
+          <button
+            type="button"
+            onClick={() => onMove("up")}
+            disabled={isFirst || pending}
+            aria-label={`Move ${item.name} up`}
+            className="flex h-11 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            onClick={() => onMove("down")}
+            disabled={isLast || pending}
+            aria-label={`Move ${item.name} down`}
+            className="flex h-11 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
+          >
+            ↓
+          </button>
+        </div>
+      )}
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate font-medium text-neutral-900">
             {item.name}

@@ -135,6 +135,29 @@ export async function deleteItemAction(id: string): Promise<void> {
   revalidate();
 }
 
+/**
+ * Move an item one slot up or down within its category by swapping sort_order
+ * with its neighbor. The order applies everywhere (count screen + report).
+ */
+export async function moveItem(
+  id: string,
+  direction: "up" | "down",
+): Promise<void> {
+  const groups = await getItemsGroupedByCategory();
+  for (const g of groups) {
+    const idx = g.items.findIndex((it) => it.id === id);
+    if (idx === -1) continue;
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= g.items.length) return;
+    const a = g.items[idx];
+    const b = g.items[swapIdx];
+    await updateItem(a.id, { sort_order: b.sort_order });
+    await updateItem(b.id, { sort_order: a.sort_order });
+    revalidate();
+    return;
+  }
+}
+
 // --- Categories ------------------------------------------------------------
 
 export async function addCategory(formData: FormData): Promise<ActionResult> {

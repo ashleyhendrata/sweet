@@ -68,12 +68,14 @@ export default async function ItemsPage() {
               {group.name}
             </h2>
             <ul>
-              {group.items.map((item) => (
+              {group.items.map((item, i) => (
                 <ItemRow
                   key={item.id}
                   item={item}
                   categories={categories}
                   units={units}
+                  isFirst={i === 0}
+                  isLast={i === group.items.length - 1}
                 />
               ))}
             </ul>

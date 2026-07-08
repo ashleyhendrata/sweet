@@ -18,6 +18,8 @@ export type Item = {
   critical_level: number | null;
   current_qty: number;
   archived: boolean;
+  // manual position within its category (lower = higher up)
+  sort_order: number;
   created_at: string;
   updated_at: string;
 };

@@ -24,12 +24,16 @@ create table if not exists public.items (
   critical_level numeric check (critical_level is null or critical_level >= 1),
   current_qty    numeric not null default 0 check (current_qty >= 0),
   archived       boolean not null default false,
+  -- manual position within a category (lower = higher up)
+  sort_order     integer not null default 0,
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()
 );
 
 create index if not exists items_category_id_idx on public.items (category_id);
 create index if not exists items_archived_idx on public.items (archived);
+create index if not exists items_category_sort_idx
+  on public.items (category_id, sort_order);
 
 -- ---------------------------------------------------------------------------
 -- Keep updated_at fresh automatically on every row change.
