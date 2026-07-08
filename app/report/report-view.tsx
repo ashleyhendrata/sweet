@@ -297,8 +297,8 @@ export default function ReportView({
                     </tr>
                   </thead>
                   <tbody>
-                    {group.items.map((item) => (
-                      <tr key={item.id}>
+                    {group.items.map((item, i) => (
+                      <tr key={item.id} className={i % 2 === 1 ? "zebra" : ""}>
                         <td className="item-name">{item.name}</td>
                         <td />
                         <td />
