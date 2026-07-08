@@ -61,6 +61,6 @@ export const config = {
   // Run on everything except Next internals and static asset files, so auth
   // logic never blocks CSS/JS/images. Adjust the file-extension list as needed.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
