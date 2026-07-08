@@ -73,7 +73,8 @@ export default async function ItemsPage() {
         )}
       </div>
 
-      <CategoryManager categories={categories} />
+      {/* Only categories that currently have items (empty ones are hidden). */}
+      <CategoryManager categories={nonEmptyGroups} />
 
       {/* Archived items */}
       {archived.length > 0 && (

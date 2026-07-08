@@ -88,15 +88,16 @@ export default function CountScreen({
   const term = search.trim().toLowerCase();
   const searching = term.length > 0;
 
-  // Filter items by name; drop empty categories while searching.
+  // Filter items by name when searching, and always drop empty categories so a
+  // category with no items doesn't show an empty header.
   const visibleGroups = useMemo(() => {
-    if (!searching) return groups;
-    return groups
-      .map((g) => ({
-        ...g,
-        items: g.items.filter((it) => it.name.toLowerCase().includes(term)),
-      }))
-      .filter((g) => g.items.length > 0);
+    const processed = searching
+      ? groups.map((g) => ({
+          ...g,
+          items: g.items.filter((it) => it.name.toLowerCase().includes(term)),
+        }))
+      : groups;
+    return processed.filter((g) => g.items.length > 0);
   }, [groups, term, searching]);
 
   const totalMatches = visibleGroups.reduce((n, g) => n + g.items.length, 0);

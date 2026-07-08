@@ -7,6 +7,7 @@ import {
   createItem,
   deleteItem,
   getCategories,
+  getItemsGroupedByCategory,
   unarchiveItem,
   updateCategory,
   updateItem,
@@ -157,12 +158,17 @@ export async function renameCategory(
   }
 }
 
-/** Move a category one slot up or down by swapping sort_order with its neighbor. */
+/**
+ * Move a category one slot up or down by swapping sort_order with its neighbor.
+ * Only in-use (non-empty) categories are reordered, matching what's shown in the
+ * manage screen, so an empty category between two visible ones is skipped over.
+ */
 export async function moveCategory(
   id: string,
   direction: "up" | "down",
 ): Promise<void> {
-  const cats = await getCategories(); // already ordered by sort_order
+  const groups = await getItemsGroupedByCategory(); // ordered by sort_order
+  const cats = groups.filter((g) => g.items.length > 0);
   const idx = cats.findIndex((c) => c.id === id);
   const swapIdx = direction === "up" ? idx - 1 : idx + 1;
   if (idx < 0 || swapIdx < 0 || swapIdx >= cats.length) return;

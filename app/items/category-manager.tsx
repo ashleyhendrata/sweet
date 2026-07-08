@@ -1,69 +1,40 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
-import { addCategory, moveCategory, renameCategory } from "./actions";
+import { useState, useTransition } from "react";
+import { moveCategory, renameCategory } from "./actions";
 import type { Category } from "@/lib/types";
 
 const inputClass =
   "block w-full rounded-lg border border-neutral-300 px-3 py-2 text-base text-neutral-900 outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900";
 
+// Only categories that currently have items are shown here. To create a
+// category, add an item and pick "+ New category" in the item form — so a
+// category always has at least one item and empty ones never linger.
 export default function CategoryManager({
   categories,
 }: {
   categories: Category[];
 }) {
-  const addRef = useRef<HTMLFormElement>(null);
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
-  function onAdd(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    startTransition(async () => {
-      const result = await addCategory(formData);
-      if (result?.error) {
-        setError(result.error);
-        return;
-      }
-      setError(null);
-      addRef.current?.reset();
-    });
-  }
-
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <h2 className="mb-3 font-semibold text-neutral-900">Categories</h2>
+      <h2 className="mb-1 font-semibold text-neutral-900">Categories</h2>
 
-      <ul className="mb-3 divide-y divide-neutral-100">
-        {categories.map((cat, i) => (
-          <CategoryRow
-            key={cat.id}
-            category={cat}
-            isFirst={i === 0}
-            isLast={i === categories.length - 1}
-          />
-        ))}
-      </ul>
-
-      <form ref={addRef} onSubmit={onAdd} className="flex gap-2">
-        <input
-          name="name"
-          required
-          placeholder="New category name"
-          className={inputClass}
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="min-h-11 shrink-0 rounded-lg border border-neutral-300 px-4 text-sm font-semibold text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
-        >
-          Add
-        </button>
-      </form>
-      {error && (
-        <p role="alert" className="mt-2 text-sm text-red-700">
-          {error}
+      {categories.length === 0 ? (
+        <p className="text-sm text-neutral-500">
+          Categories appear here once they have items. Add one with “+ New
+          category” when you add an item.
         </p>
+      ) : (
+        <ul className="divide-y divide-neutral-100">
+          {categories.map((cat, i) => (
+            <CategoryRow
+              key={cat.id}
+              category={cat}
+              isFirst={i === 0}
+              isLast={i === categories.length - 1}
+            />
+          ))}
+        </ul>
       )}
     </div>
   );
