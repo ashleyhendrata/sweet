@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { addItem, editItem } from "./actions";
+import { addItem, deleteItemAction, editItem } from "./actions";
 import type { Category, Item } from "@/lib/types";
 
 const COMMON_UNITS = [
@@ -57,6 +57,18 @@ export default function ItemForm({
       setError(null);
       formRef.current?.reset();
       setShowNewCategory(false);
+      onDone?.();
+    });
+  }
+
+  function onDelete() {
+    if (!item) return;
+    if (
+      !confirm(`Permanently delete “${item.name}”? This can't be undone.`)
+    )
+      return;
+    startTransition(async () => {
+      await deleteItemAction(item.id);
       onDone?.();
     });
   }
@@ -144,7 +156,7 @@ export default function ItemForm({
         </div>
         <div className="w-24">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            On hand
+            Count
           </label>
           <input
             name="current_qty"
@@ -190,6 +202,19 @@ export default function ItemForm({
           </button>
         )}
       </div>
+
+      {isEdit && (
+        <div className="mt-1 border-t border-neutral-200 pt-3">
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={pending}
+            className="min-h-11 w-full rounded-lg border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+          >
+            Delete permanently
+          </button>
+        </div>
+      )}
     </form>
   );
 }

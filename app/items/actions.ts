@@ -5,6 +5,7 @@ import {
   archiveItem,
   createCategory,
   createItem,
+  deleteItem,
   getCategories,
   unarchiveItem,
   updateCategory,
@@ -115,6 +116,13 @@ export async function archiveItemAction(id: string): Promise<void> {
 export async function restoreItemAction(id: string): Promise<void> {
   if (!id) return;
   await unarchiveItem(id);
+  revalidate();
+}
+
+/** Permanently delete an item. Guarded by a confirm dialog in the UI. */
+export async function deleteItemAction(id: string): Promise<void> {
+  if (!id) return;
+  await deleteItem(id);
   revalidate();
 }
 

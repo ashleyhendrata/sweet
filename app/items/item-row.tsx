@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import ItemForm from "./item-form";
-import { archiveItemAction, restoreItemAction } from "./actions";
+import {
+  archiveItemAction,
+  deleteItemAction,
+  restoreItemAction,
+} from "./actions";
+import { useEdit } from "./edit-context";
 import { isLow, type Category, type Item } from "@/lib/types";
 
 /**
@@ -19,7 +24,8 @@ export default function ItemRow({
   categories: Category[];
   archived?: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
+  const { editingId, setEditingId } = useEdit();
+  const editing = editingId === item.id;
   const [pending, startTransition] = useTransition();
 
   if (editing) {
@@ -28,7 +34,7 @@ export default function ItemRow({
         <ItemForm
           categories={categories}
           item={item}
-          onDone={() => setEditing(false)}
+          onDone={() => setEditingId(null)}
         />
       </li>
     );
@@ -44,6 +50,16 @@ export default function ItemRow({
 
   function onRestore() {
     startTransition(() => restoreItemAction(item.id));
+  }
+
+  function onDelete() {
+    if (
+      !confirm(
+        `Permanently delete “${item.name}”? This can't be undone.`,
+      )
+    )
+      return;
+    startTransition(() => deleteItemAction(item.id));
   }
 
   return (
@@ -67,19 +83,29 @@ export default function ItemRow({
 
       <div className="flex shrink-0 items-center gap-2">
         {archived ? (
-          <button
-            type="button"
-            onClick={onRestore}
-            disabled={pending}
-            className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
-          >
-            Restore
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={onRestore}
+              disabled={pending}
+              className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+            >
+              Restore
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={pending}
+              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+            >
+              Delete
+            </button>
+          </>
         ) : (
           <>
             <button
               type="button"
-              onClick={() => setEditing(true)}
+              onClick={() => setEditingId(item.id)}
               className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
             >
               Edit

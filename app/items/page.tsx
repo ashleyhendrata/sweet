@@ -6,6 +6,7 @@ import {
 } from "@/lib/db";
 import AddItem from "./add-item";
 import CategoryManager from "./category-manager";
+import { EditProvider } from "./edit-context";
 import ItemRow from "./item-row";
 
 // Manage screen: add/edit/archive items and manage categories. Reads are done
@@ -33,8 +34,9 @@ export default async function ItemsPage() {
 
       <AddItem categories={categories} />
 
-      {/* Items grouped by category */}
-      <div className="space-y-4">
+      <EditProvider>
+        {/* Items grouped by category */}
+        <div className="space-y-4">
         {nonEmptyGroups.map((group) => (
           <section
             key={group.id}
@@ -77,6 +79,7 @@ export default async function ItemsPage() {
           </ul>
         </details>
       )}
+      </EditProvider>
     </main>
   );
 }

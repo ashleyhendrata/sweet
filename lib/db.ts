@@ -214,3 +214,13 @@ export async function unarchiveItem(id: string): Promise<void> {
     .eq("id", id);
   if (error) throw error;
 }
+
+/**
+ * Permanently delete an item. Unlike archiving, this cannot be undone. Prefer
+ * archiveItem for everyday removal; this is for genuinely unwanted items.
+ */
+export async function deleteItem(id: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("items").delete().eq("id", id);
+  if (error) throw error;
+}
