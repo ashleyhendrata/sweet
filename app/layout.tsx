@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sweetwaters Inventory",
   description: "Phone-first inventory tracker for Sweetwaters Coffee & Tea.",
+  // Short label shown under the icon when added to an iPhone home screen
+  // (the full title is too long there).
+  appleWebApp: { title: "SW Count" },
 };
 
 // Phone-first: lock the initial scale so the count screen feels like an app.
