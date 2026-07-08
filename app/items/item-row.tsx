@@ -46,7 +46,7 @@ export default function ItemRow({
   const low = !archived && isLow(item);
 
   function onArchive() {
-    if (!confirm(`Archive “${item.name}”? It will be hidden from counts.`))
+    if (!confirm(`Archive “${item.name}”? It will be hidden from the homepage.`))
       return;
     startTransition(() => archiveItemAction(item.id));
   }
@@ -58,7 +58,7 @@ export default function ItemRow({
   function onDelete() {
     if (
       !confirm(
-        `Permanently delete “${item.name}”? This can't be undone.`,
+        `Permanently delete “${item.name}”? Seasonal items can be archived instead.`,
       )
     )
       return;

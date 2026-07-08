@@ -59,7 +59,11 @@ export default function ItemForm({
 
   function onDelete() {
     if (!item) return;
-    if (!confirm(`Permanently delete “${item.name}”? This can't be undone.`))
+    if (
+      !confirm(
+        `Permanently delete “${item.name}”? Seasonal items can be archived instead.`,
+      )
+    )
       return;
     startTransition(async () => {
       await deleteItemAction(item.id);
@@ -218,7 +222,7 @@ export default function ItemForm({
             disabled={pending}
             className="min-h-11 w-full rounded-lg border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
           >
-            Delete permanently
+            Delete
           </button>
         </div>
       )}
