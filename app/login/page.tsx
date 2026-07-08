@@ -1,4 +1,5 @@
 import { login } from "./actions";
+import SubmitButton from "./submit-button";
 
 // Login is a plain server-rendered form posting to a Server Action — no client
 // JS required, so it loads instantly even on a weak connection behind the bar.
@@ -66,12 +67,7 @@ export default async function LoginPage({
             />
           </div>
 
-          <button
-            type="submit"
-            className="min-h-12 w-full rounded-lg bg-neutral-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-neutral-700 active:bg-neutral-800"
-          >
-            Sign in
-          </button>
+          <SubmitButton />
         </form>
       </div>
     </main>

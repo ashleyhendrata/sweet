@@ -39,6 +39,7 @@ export default function ItemForm({
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [showNewCategory, setShowNewCategory] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isEdit = Boolean(item);
 
@@ -46,8 +47,14 @@ export default function ItemForm({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      if (isEdit) await editItem(formData);
-      else await addItem(formData);
+      const result = isEdit
+        ? await editItem(formData)
+        : await addItem(formData);
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      setError(null);
       formRef.current?.reset();
       setShowNewCategory(false);
       onDone?.();
@@ -154,6 +161,15 @@ export default function ItemForm({
         Leave <span className="font-medium">Critical</span> blank if the item
         never needs reorder alerts.
       </p>
+
+      {error && (
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+        >
+          {error}
+        </p>
+      )}
 
       <div className="flex gap-2 pt-1">
         <button

@@ -97,7 +97,7 @@ export default function ReportView({
         <div className="mx-auto flex max-w-[8.25in] flex-wrap items-center justify-between gap-3">
           <Link
             href="/"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
           >
             ‹ Count
           </Link>

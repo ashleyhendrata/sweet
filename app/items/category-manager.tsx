@@ -14,12 +14,18 @@ export default function CategoryManager({
 }) {
   const addRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function onAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      await addCategory(formData);
+      const result = await addCategory(formData);
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      setError(null);
       addRef.current?.reset();
     });
   }
@@ -54,6 +60,11 @@ export default function CategoryManager({
           Add
         </button>
       </form>
+      {error && (
+        <p role="alert" className="mt-2 text-sm text-red-700">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -69,12 +80,18 @@ function CategoryRow({
 }) {
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function onRename(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      await renameCategory(formData);
+      const result = await renameCategory(formData);
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      setError(null);
       setEditing(false);
     });
   }
@@ -110,6 +127,11 @@ function CategoryRow({
             Cancel
           </button>
         </form>
+        {error && (
+          <p role="alert" className="mt-1 text-sm text-red-700">
+            {error}
+          </p>
+        )}
       </li>
     );
   }
@@ -125,7 +147,7 @@ function CategoryRow({
           onClick={() => move("up")}
           disabled={isFirst || pending}
           aria-label={`Move ${category.name} up`}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 disabled:opacity-30"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 disabled:opacity-30"
         >
           ↑
         </button>
@@ -134,14 +156,14 @@ function CategoryRow({
           onClick={() => move("down")}
           disabled={isLast || pending}
           aria-label={`Move ${category.name} down`}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 disabled:opacity-30"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 disabled:opacity-30"
         >
           ↓
         </button>
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="min-h-9 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
         >
           Rename
         </button>

@@ -71,7 +71,7 @@ export default function ItemRow({
             type="button"
             onClick={onRestore}
             disabled={pending}
-            className="min-h-9 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+            className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
           >
             Restore
           </button>
@@ -80,7 +80,7 @@ export default function ItemRow({
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="min-h-9 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+              className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
             >
               Edit
             </button>
@@ -88,7 +88,7 @@ export default function ItemRow({
               type="button"
               onClick={onArchive}
               disabled={pending}
-              className="min-h-9 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
             >
               Archive
             </button>

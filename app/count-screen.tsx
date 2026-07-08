@@ -22,6 +22,9 @@ export default function CountScreen({
   });
   const [search, setSearch] = useState("");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Surfaced if a debounced save fails (e.g. lost connection) so a count isn't
+  // silently lost — otherwise saves are invisible by design.
+  const [saveFailed, setSaveFailed] = useState(false);
 
   // Per-item debounce timers, so rapid taps coalesce into one write.
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -35,9 +38,12 @@ export default function CountScreen({
     if (existing) clearTimeout(existing);
     const t = setTimeout(() => {
       timers.current.delete(id);
-      saveItemQty(id, qty).catch((err) =>
-        console.error("Failed to save quantity", err),
-      );
+      saveItemQty(id, qty)
+        .then(() => setSaveFailed(false))
+        .catch((err) => {
+          console.error("Failed to save quantity", err);
+          setSaveFailed(true);
+        });
     }, SAVE_DEBOUNCE_MS);
     timers.current.set(id, t);
   }, []);
@@ -94,29 +100,30 @@ export default function CountScreen({
   }, [groups, term, searching]);
 
   const totalMatches = visibleGroups.reduce((n, g) => n + g.items.length, 0);
+  const hasAnyItems = groups.some((g) => g.items.length > 0);
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-3">
-        <h1 className="text-lg font-bold text-neutral-900">Inventory</h1>
+      <header className="flex items-center justify-between px-3 py-2">
+        <h1 className="px-1 text-lg font-bold text-neutral-900">Inventory</h1>
         <div className="flex items-center gap-1">
           <Link
             href="/report"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
           >
             Report
           </Link>
           <Link
             href="/items"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
           >
             Manage
           </Link>
           <form action={logout}>
             <button
               type="submit"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
             >
               Sign out
             </button>
@@ -139,6 +146,12 @@ export default function CountScreen({
               } reordering`
             : "✓ Nothing needs reordering"}
         </div>
+        {saveFailed && (
+          <div className="bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900">
+            ⚠ Couldn’t save a change — check your connection. Your counts are
+            still on screen.
+          </div>
+        )}
         <div className="p-3">
           <input
             type="search"
@@ -157,6 +170,21 @@ export default function CountScreen({
           <p className="px-4 py-10 text-center text-sm text-neutral-500">
             No items match “{search.trim()}”.
           </p>
+        ) : !searching && !hasAnyItems ? (
+          <div className="px-6 py-16 text-center">
+            <p className="text-base font-medium text-neutral-900">
+              No items yet
+            </p>
+            <p className="mt-1 text-sm text-neutral-500">
+              Add what you want to track, then come back here to count.
+            </p>
+            <Link
+              href="/items"
+              className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-neutral-900 px-5 text-sm font-semibold text-white hover:bg-neutral-700"
+            >
+              Go to Manage
+            </Link>
+          </div>
         ) : (
           visibleGroups.map((group) => {
             // While searching, force-expand so matches are always visible.

@@ -53,39 +53,57 @@ async function resolveCategoryId(formData: FormData): Promise<string> {
   return cat.id;
 }
 
-// --- Items -----------------------------------------------------------------
+// Actions that take user input return a result so the form can show a friendly
+// message instead of crashing (e.g. a duplicate category name).
+export type ActionResult = { error?: string };
 
-export async function addItem(formData: FormData): Promise<void> {
-  const name = str(formData, "name");
-  if (!name) return;
-  const category_id = await resolveCategoryId(formData);
-  if (!category_id) return;
-
-  await createItem({
-    name,
-    category_id,
-    unit: str(formData, "unit") || "units",
-    critical_level: criticalLevel(formData),
-    current_qty: num(formData, "current_qty"),
-  });
-  revalidate();
+function friendlyError(e: unknown): string {
+  const code = (e as { code?: string })?.code;
+  if (code === "23505") return "That name is already taken.";
+  return "Something went wrong. Please try again.";
 }
 
-export async function editItem(formData: FormData): Promise<void> {
+// --- Items -----------------------------------------------------------------
+
+export async function addItem(formData: FormData): Promise<ActionResult> {
+  const name = str(formData, "name");
+  if (!name) return { error: "Enter an item name." };
+  try {
+    const category_id = await resolveCategoryId(formData);
+    if (!category_id) return { error: "Choose a category." };
+    await createItem({
+      name,
+      category_id,
+      unit: str(formData, "unit") || "units",
+      critical_level: criticalLevel(formData),
+      current_qty: num(formData, "current_qty"),
+    });
+    revalidate();
+    return {};
+  } catch (e) {
+    return { error: friendlyError(e) };
+  }
+}
+
+export async function editItem(formData: FormData): Promise<ActionResult> {
   const id = str(formData, "id");
   const name = str(formData, "name");
-  if (!id || !name) return;
-  const category_id = await resolveCategoryId(formData);
-  if (!category_id) return;
-
-  await updateItem(id, {
-    name,
-    category_id,
-    unit: str(formData, "unit") || "units",
-    critical_level: criticalLevel(formData),
-    current_qty: num(formData, "current_qty"),
-  });
-  revalidate();
+  if (!id || !name) return { error: "Enter an item name." };
+  try {
+    const category_id = await resolveCategoryId(formData);
+    if (!category_id) return { error: "Choose a category." };
+    await updateItem(id, {
+      name,
+      category_id,
+      unit: str(formData, "unit") || "units",
+      critical_level: criticalLevel(formData),
+      current_qty: num(formData, "current_qty"),
+    });
+    revalidate();
+    return {};
+  } catch (e) {
+    return { error: friendlyError(e) };
+  }
 }
 
 export async function archiveItemAction(id: string): Promise<void> {
@@ -102,21 +120,33 @@ export async function restoreItemAction(id: string): Promise<void> {
 
 // --- Categories ------------------------------------------------------------
 
-export async function addCategory(formData: FormData): Promise<void> {
+export async function addCategory(formData: FormData): Promise<ActionResult> {
   const name = str(formData, "name");
-  if (!name) return;
-  const cats = await getCategories();
-  const nextOrder = cats.reduce((m, c) => Math.max(m, c.sort_order), 0) + 1;
-  await createCategory({ name, sort_order: nextOrder });
-  revalidate();
+  if (!name) return { error: "Enter a category name." };
+  try {
+    const cats = await getCategories();
+    const nextOrder = cats.reduce((m, c) => Math.max(m, c.sort_order), 0) + 1;
+    await createCategory({ name, sort_order: nextOrder });
+    revalidate();
+    return {};
+  } catch (e) {
+    return { error: friendlyError(e) };
+  }
 }
 
-export async function renameCategory(formData: FormData): Promise<void> {
+export async function renameCategory(
+  formData: FormData,
+): Promise<ActionResult> {
   const id = str(formData, "id");
   const name = str(formData, "name");
-  if (!id || !name) return;
-  await updateCategory(id, { name });
-  revalidate();
+  if (!id || !name) return { error: "Enter a category name." };
+  try {
+    await updateCategory(id, { name });
+    revalidate();
+    return {};
+  } catch (e) {
+    return { error: friendlyError(e) };
+  }
 }
 
 /** Move a category one slot up or down by swapping sort_order with its neighbor. */
