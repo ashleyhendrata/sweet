@@ -18,11 +18,14 @@ export default function ItemForm({
   categories,
   units,
   item,
+  defaultCategoryId,
   onDone,
 }: {
   categories: Category[];
   units: string[];
   item?: Item;
+  // Pre-selects the category when adding (e.g. from a category's "+ Add").
+  defaultCategoryId?: string;
   onDone?: () => void;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -95,7 +98,7 @@ export default function ItemForm({
         <select
           name="category_id"
           required
-          defaultValue={item?.category_id ?? ""}
+          defaultValue={item?.category_id ?? defaultCategoryId ?? ""}
           onChange={(e) => setShowNewCategory(e.target.value === NEW_CATEGORY)}
           className={inputClass}
         >

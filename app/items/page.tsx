@@ -6,6 +6,7 @@ import {
 } from "@/lib/db";
 import AddItem from "./add-item";
 import CategoryManager from "./category-manager";
+import CategorySection from "./category-section";
 import { EditProvider } from "./edit-context";
 import ItemRow from "./item-row";
 
@@ -60,26 +61,12 @@ export default async function ItemsPage() {
         {/* Items grouped by category */}
         <div className="space-y-4">
         {nonEmptyGroups.map((group) => (
-          <section
+          <CategorySection
             key={group.id}
-            className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm"
-          >
-            <h2 className="bg-neutral-50 px-4 py-2 font-semibold text-neutral-900">
-              {group.name}
-            </h2>
-            <ul>
-              {group.items.map((item, i) => (
-                <ItemRow
-                  key={item.id}
-                  item={item}
-                  categories={categories}
-                  units={units}
-                  isFirst={i === 0}
-                  isLast={i === group.items.length - 1}
-                />
-              ))}
-            </ul>
-          </section>
+            group={group}
+            categories={categories}
+            units={units}
+          />
         ))}
         {nonEmptyGroups.length === 0 && (
           <p className="px-1 text-sm text-neutral-500">
