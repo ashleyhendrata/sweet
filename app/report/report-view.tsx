@@ -160,7 +160,7 @@ export default function ReportView({
         {layout === "full" ? (
           <header className="report-header avoid-break">
             <h1 className="report-title">Inventory Report</h1>
-            <p className="report-location">{location}</p>
+            <p className="report-location">{location} · The Grove</p>
             <p className="report-summary">
               {totalItems} item{totalItems === 1 ? "" : "s"} ·{" "}
               {inventory.length} categor
@@ -328,7 +328,7 @@ export default function ReportView({
           </section>
         )}
 
-        <footer className="report-footer">{location} · Inventory Report</footer>
+        <footer className="report-footer">{location} · The Grove</footer>
       </article>
     </div>
   );
