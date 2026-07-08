@@ -6,8 +6,15 @@ export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 const HEAD =
-  "M30 12 L46 34 Q50 31 54 34 L70 12 L78 40 Q92 60 50 83 Q8 60 22 40 Z";
-const WHISKERS = ["M45 60 L12 55", "M45 67 L12 71", "M55 60 L88 55", "M55 67 L88 71"];
+  "M30 12 L46 34 Q50 31 54 34 L70 12 L78 40 Q90 60 60 80 Q50 85 40 80 Q10 60 22 40 Z";
+const WHISKERS = [
+  "M45 58 L12 52",
+  "M45 63 L11 63",
+  "M45 68 L12 73",
+  "M55 58 L88 52",
+  "M55 63 L89 63",
+  "M55 68 L88 73",
+];
 
 export default function AppleIcon() {
   return new ImageResponse(
