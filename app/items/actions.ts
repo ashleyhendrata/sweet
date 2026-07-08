@@ -38,6 +38,14 @@ function criticalLevel(formData: FormData): number | null {
   return Number.isFinite(n) && n >= 1 ? n : null;
 }
 
+// Resolve the chosen unit. The dropdown offers an inline "+ New unit…" option
+// (value `__new_unit__`); when picked, use the typed value instead.
+function resolveUnit(formData: FormData): string {
+  const selected = str(formData, "unit");
+  if (selected === "__new_unit__") return str(formData, "new_unit") || "units";
+  return selected || "units";
+}
+
 /**
  * Resolve the chosen category. The item form's dropdown includes an inline
  * "New category…" option (value `__new__`); when picked, we create the category
@@ -76,7 +84,7 @@ export async function addItem(formData: FormData): Promise<ActionResult> {
     await createItem({
       name,
       category_id,
-      unit: str(formData, "unit") || "units",
+      unit: resolveUnit(formData),
       critical_level: criticalLevel(formData),
       current_qty: num(formData, "current_qty"),
     });
@@ -97,7 +105,7 @@ export async function editItem(formData: FormData): Promise<ActionResult> {
     await updateItem(id, {
       name,
       category_id,
-      unit: str(formData, "unit") || "units",
+      unit: resolveUnit(formData),
       critical_level: criticalLevel(formData),
       current_qty: num(formData, "current_qty"),
     });

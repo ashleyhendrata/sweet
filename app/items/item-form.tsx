@@ -4,44 +4,39 @@ import { useRef, useState, useTransition } from "react";
 import { addItem, deleteItemAction, editItem } from "./actions";
 import type { Category, Item } from "@/lib/types";
 
-const COMMON_UNITS = [
-  "boxes",
-  "bags",
-  "cartons",
-  "sleeves",
-  "bottles",
-  "cases",
-  "quarts",
-  "rolls",
-  "jars",
-  "buckets",
-  "units",
-];
-
 const NEW_CATEGORY = "__new__";
+const NEW_UNIT = "__new_unit__";
 const inputClass =
   "block w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-base text-neutral-900 outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900";
 
 /**
  * One form for both adding and editing an item. Pass `item` to edit; omit it to
- * add. The category dropdown carries an inline "New category…" option that
- * reveals a text field, handled server-side in `resolveCategoryId`.
+ * add. Category and Unit are dropdowns of existing values, each with an inline
+ * "+ New…" option that reveals a text field (resolved server-side).
  */
 export default function ItemForm({
   categories,
+  units,
   item,
   onDone,
 }: {
   categories: Category[];
+  units: string[];
   item?: Item;
   onDone?: () => void;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [showNewCategory, setShowNewCategory] = useState(false);
+  const [showNewUnit, setShowNewUnit] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = Boolean(item);
+
+  // Distinct units for the dropdown, always including this item's own unit.
+  const unitOptions = Array.from(
+    new Set([...units, ...(item?.unit ? [item.unit] : [])]),
+  ).sort((a, b) => a.localeCompare(b));
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -57,15 +52,14 @@ export default function ItemForm({
       setError(null);
       formRef.current?.reset();
       setShowNewCategory(false);
+      setShowNewUnit(false);
       onDone?.();
     });
   }
 
   function onDelete() {
     if (!item) return;
-    if (
-      !confirm(`Permanently delete “${item.name}”? This can't be undone.`)
-    )
+    if (!confirm(`Permanently delete “${item.name}”? This can't be undone.`))
       return;
     startTransition(async () => {
       await deleteItemAction(item.id);
@@ -121,26 +115,39 @@ export default function ItemForm({
         )}
       </div>
 
+      <div>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
+          Unit
+        </label>
+        <select
+          name="unit"
+          required
+          defaultValue={item?.unit ?? ""}
+          onChange={(e) => setShowNewUnit(e.target.value === NEW_UNIT)}
+          className={inputClass}
+        >
+          <option value="" disabled>
+            Select a unit…
+          </option>
+          {unitOptions.map((u) => (
+            <option key={u} value={u}>
+              {u}
+            </option>
+          ))}
+          <option value={NEW_UNIT}>+ New unit…</option>
+        </select>
+        {showNewUnit && (
+          <input
+            name="new_unit"
+            required
+            placeholder="New unit (e.g. bottles)"
+            className={`${inputClass} mt-2`}
+          />
+        )}
+      </div>
+
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Unit
-          </label>
-          <input
-            name="unit"
-            required
-            list="unit-options"
-            defaultValue={item?.unit ?? ""}
-            placeholder="boxes"
-            className={inputClass}
-          />
-          <datalist id="unit-options">
-            {COMMON_UNITS.map((u) => (
-              <option key={u} value={u} />
-            ))}
-          </datalist>
-        </div>
-        <div className="w-28">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
             Reorder at
           </label>
@@ -154,7 +161,7 @@ export default function ItemForm({
             className={inputClass}
           />
         </div>
-        <div className="w-24">
+        <div className="flex-1">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
             Count
           </label>

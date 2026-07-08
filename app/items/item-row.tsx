@@ -18,10 +18,12 @@ import { isLow, type Category, type Item } from "@/lib/types";
 export default function ItemRow({
   item,
   categories,
+  units,
   archived = false,
 }: {
   item: Item;
   categories: Category[];
+  units: string[];
   archived?: boolean;
 }) {
   const { editingId, setEditingId } = useEdit();
@@ -33,6 +35,7 @@ export default function ItemRow({
       <li className="border-t border-neutral-100 bg-neutral-50 px-4 py-3">
         <ItemForm
           categories={categories}
+          units={units}
           item={item}
           onDone={() => setEditingId(null)}
         />

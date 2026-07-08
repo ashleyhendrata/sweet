@@ -20,6 +20,14 @@ export default async function ItemsPage() {
 
   const nonEmptyGroups = groups.filter((g) => g.items.length > 0);
 
+  // Distinct units already in use, for the item form's unit dropdown.
+  const units = Array.from(
+    new Set([
+      ...groups.flatMap((g) => g.items.map((i) => i.unit)),
+      ...archived.map((i) => i.unit),
+    ]),
+  ).sort((a, b) => a.localeCompare(b));
+
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 p-4 pb-16">
       <header className="flex items-center justify-between">
@@ -46,7 +54,7 @@ export default async function ItemsPage() {
         </Link>
       </header>
 
-      <AddItem categories={categories} />
+      <AddItem categories={categories} units={units} />
 
       <EditProvider>
         {/* Items grouped by category */}
@@ -61,7 +69,12 @@ export default async function ItemsPage() {
             </h2>
             <ul>
               {group.items.map((item) => (
-                <ItemRow key={item.id} item={item} categories={categories} />
+                <ItemRow
+                  key={item.id}
+                  item={item}
+                  categories={categories}
+                  units={units}
+                />
               ))}
             </ul>
           </section>
@@ -88,6 +101,7 @@ export default async function ItemsPage() {
                 key={item.id}
                 item={item}
                 categories={categories}
+                units={units}
                 archived
               />
             ))}

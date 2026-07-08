@@ -6,7 +6,13 @@ import type { Category } from "@/lib/types";
 
 // Keep the manage screen tidy: the add form stays tucked behind a button until
 // needed, so the item list is what you see first.
-export default function AddItem({ categories }: { categories: Category[] }) {
+export default function AddItem({
+  categories,
+  units,
+}: {
+  categories: Category[];
+  units: string[];
+}) {
   const [open, setOpen] = useState(false);
 
   if (!open) {
@@ -24,7 +30,11 @@ export default function AddItem({ categories }: { categories: Category[] }) {
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
       <h2 className="mb-3 font-semibold text-neutral-900">New item</h2>
-      <ItemForm categories={categories} onDone={() => setOpen(false)} />
+      <ItemForm
+        categories={categories}
+        units={units}
+        onDone={() => setOpen(false)}
+      />
     </div>
   );
 }
