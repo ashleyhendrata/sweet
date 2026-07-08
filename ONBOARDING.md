@@ -38,7 +38,7 @@ A red **REORDER** badge means that item is **at or below its reorder level — w
 - Want a **blank sheet to write counts on by hand?** Change **Layout → Blank checklist** before printing.
 
 ## Need to add or fix an item?
-Tap **Manage** (top-right) to add, edit, or archive items and categories. When in doubt, ask your manager — nothing you tap here can break anything.
+Tap **Manage** (top-right) to add, edit, archive, or reorder items and categories. **Archive** seasonal items rather than deleting them — deleting is permanent. When in doubt, ask your manager.
 
 ---
 _Questions? Ask a shift lead. Thanks for keeping us stocked! ☕_
