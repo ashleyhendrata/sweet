@@ -196,20 +196,21 @@ export default function ReportView({
                 <thead>
                   <tr>
                     <th>Item</th>
-                    <th>Category</th>
-                    <th className="num">On hand</th>
+                    <th className="num">Count</th>
                     <th>Unit</th>
-                    <th className="num">Critical</th>
+                    {/* Critical shows only on the printed page, not on screen. */}
+                    <th className="num hidden print:table-cell">Critical</th>
                   </tr>
                 </thead>
                 <tbody>
                   {lowItems.map((item) => (
                     <tr key={item.id}>
                       <td className="item-name">{item.name}</td>
-                      <td>{item.category_name}</td>
                       <td className="num">{item.current_qty}</td>
                       <td>{item.unit}</td>
-                      <td className="num">{item.critical_level}</td>
+                      <td className="num hidden print:table-cell">
+                        {item.critical_level}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
