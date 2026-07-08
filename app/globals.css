@@ -316,12 +316,12 @@ body {
     font-size: 10px;
   }
 
-  /* Blank checklist: compacted like the report (fewer pages), but rows stay
-     tall enough to hand-write a count/note in. Placed after the .print-compact
-     rule so it wins on equal specificity. */
+  /* Blank checklist: tighter rows so more items fit per page, but still tall
+     enough (~24px line) to hand-write a count/note in. Placed after the
+     .print-compact rule so it wins on equal specificity. */
   .print-blank .report-table td {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 }
 
