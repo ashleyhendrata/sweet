@@ -106,7 +106,9 @@ export default function CountScreen({
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
       {/* Top bar */}
       <header className="flex items-center justify-between px-3 py-2">
-        <h1 className="px-1 text-lg font-bold text-neutral-900">Inventory</h1>
+        <h1 className="px-1 text-lg font-bold text-neutral-900">
+          Inventory Count
+        </h1>
         <div className="flex items-center gap-1">
           <Link
             href="/report"
@@ -262,7 +264,7 @@ export default function CountScreen({
                             <div className="text-xs text-neutral-500">
                               {item.unit}
                               {item.critical_level != null &&
-                                ` · critical ${item.critical_level}`}
+                                ` · reorder at ${item.critical_level}`}
                             </div>
                           </div>
 

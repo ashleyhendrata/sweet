@@ -140,9 +140,9 @@ export default function ItemForm({
             ))}
           </datalist>
         </div>
-        <div className="w-24">
+        <div className="w-28">
           <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Critical
+            Reorder at
           </label>
           <input
             name="critical_level"
@@ -170,7 +170,7 @@ export default function ItemForm({
       </div>
 
       <p className="text-xs text-neutral-500">
-        Leave <span className="font-medium">Critical</span> blank if the item
+        Leave <span className="font-medium">Reorder at</span> blank if the item
         never needs reorder alerts.
       </p>
 

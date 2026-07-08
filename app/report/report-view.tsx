@@ -97,9 +97,23 @@ export default function ReportView({
         <div className="mx-auto flex max-w-[8.25in] flex-wrap items-center justify-between gap-3">
           <Link
             href="/"
-            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+            aria-label="Go to count screen"
+            className="flex min-h-11 items-center rounded-lg px-3 text-neutral-600 hover:bg-neutral-100"
           >
-            ‹ Count
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <path d="M9 22V12h6v10" />
+            </svg>
           </Link>
           <div className="flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-neutral-600">
@@ -198,8 +212,8 @@ export default function ReportView({
                     <th>Item</th>
                     <th className="num">Count</th>
                     <th>Unit</th>
-                    {/* Critical shows only on the printed page, not on screen. */}
-                    <th className="num hidden print:table-cell">Critical</th>
+                    {/* Reorder-at shows only on the printed page, not on screen. */}
+                    <th className="num hidden print:table-cell">Reorder at</th>
                   </tr>
                 </thead>
                 <tbody>
