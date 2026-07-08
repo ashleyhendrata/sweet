@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { saveItemQty } from "./actions";
 import { logout } from "./login/actions";
@@ -97,14 +98,22 @@ export default function CountScreen({
       {/* Top bar */}
       <header className="flex items-center justify-between px-4 py-3">
         <h1 className="text-lg font-bold text-neutral-900">Inventory</h1>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+        <div className="flex items-center gap-1">
+          <Link
+            href="/items"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
           >
-            Sign out
-          </button>
-        </form>
+            Manage
+          </Link>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
       {/* Sticky: reorder banner + search, always reachable behind the counter */}

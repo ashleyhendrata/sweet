@@ -99,6 +99,19 @@ export async function getItems(): Promise<ItemWithCategory[]> {
   return (data ?? []).map(flatten);
 }
 
+/** Archived (soft-deleted) items with their category name, for the manage screen. */
+export async function getArchivedItems(): Promise<ItemWithCategory[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("items")
+    .select(ITEM_WITH_CATEGORY)
+    .eq("archived", true)
+    .order("name", { ascending: true })
+    .returns<ItemRow[]>();
+  if (error) throw error;
+  return (data ?? []).map(flatten);
+}
+
 /** Non-archived items that are at or below their critical level. */
 export async function getLowItems(): Promise<ItemWithCategory[]> {
   // The "current_qty <= critical_level" comparison is done via a view so the
