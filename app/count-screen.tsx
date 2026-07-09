@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { saveItemQty } from "./actions";
-import { logout } from "./login/actions";
+import AppNav from "./app-nav";
 import { isLow, type CategoryWithItems } from "@/lib/types";
 
 const SAVE_DEBOUNCE_MS = 500;
@@ -106,32 +106,8 @@ export default function CountScreen({
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-3 py-2">
-        <h1 className="px-1 text-lg font-bold text-neutral-900">
-          Inventory Count
-        </h1>
-        <div className="flex items-center gap-1">
-          <Link
-            href="/report"
-            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-          >
-            Report
-          </Link>
-          <Link
-            href="/items"
-            className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-          >
-            Manage
-          </Link>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-500 hover:bg-neutral-100"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
+      <header className="px-3 py-2">
+        <AppNav current="/" />
       </header>
 
       {/* Sticky: reorder banner + search, always reachable behind the counter */}

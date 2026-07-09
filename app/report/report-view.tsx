@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import AppNav from "../app-nav";
 import PrintButton from "./print-button";
 import ReportDate from "./report-date";
 import {
@@ -94,28 +94,9 @@ export default function ReportView({
     <div className="min-h-full bg-neutral-100 print:bg-white">
       {/* Screen-only toolbar */}
       <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white px-4 py-3 print:hidden">
-        <div className="mx-auto flex max-w-[8.25in] flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/"
-            aria-label="Go to count screen"
-            className="flex min-h-11 items-center rounded-lg px-3 text-neutral-600 hover:bg-neutral-100"
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <path d="M9 22V12h6v10" />
-            </svg>
-          </Link>
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="mx-auto max-w-[8.25in]">
+          <AppNav current="/report" />
+          <div className="mt-2 flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-neutral-600">
               Layout
               <select

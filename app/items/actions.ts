@@ -73,6 +73,23 @@ function friendlyError(e: unknown): string {
   return "Something went wrong. Please try again.";
 }
 
+// Is there already a (non-archived) item with this name in this category?
+// Case-insensitive, compared in JS so names with % or _ aren't treated as
+// wildcards. `excludeId` skips the item being edited.
+async function nameTaken(
+  categoryId: string,
+  name: string,
+  excludeId?: string,
+): Promise<boolean> {
+  const groups = await getItemsGroupedByCategory();
+  const group = groups.find((g) => g.id === categoryId);
+  if (!group) return false;
+  const lower = name.toLowerCase();
+  return group.items.some(
+    (it) => it.id !== excludeId && it.name.toLowerCase() === lower,
+  );
+}
+
 // --- Items -----------------------------------------------------------------
 
 export async function addItem(formData: FormData): Promise<ActionResult> {
@@ -81,6 +98,9 @@ export async function addItem(formData: FormData): Promise<ActionResult> {
   try {
     const category_id = await resolveCategoryId(formData);
     if (!category_id) return { error: "Choose a category." };
+    if (await nameTaken(category_id, name)) {
+      return { error: `“${name}” is already in this category.` };
+    }
     await createItem({
       name,
       category_id,
@@ -102,6 +122,9 @@ export async function editItem(formData: FormData): Promise<ActionResult> {
   try {
     const category_id = await resolveCategoryId(formData);
     if (!category_id) return { error: "Choose a category." };
+    if (await nameTaken(category_id, name, id)) {
+      return { error: `“${name}” is already in this category.` };
+    }
     await updateItem(id, {
       name,
       category_id,

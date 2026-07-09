@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {
   getArchivedItems,
   getCategories,
   getItemsGroupedByCategory,
 } from "@/lib/db";
 import AddItem from "./add-item";
+import AppNav from "../app-nav";
 import CategoryManager from "./category-manager";
 import CategorySection from "./category-section";
 import { EditProvider } from "./edit-context";
@@ -31,28 +31,11 @@ export default async function ItemsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 p-4 pb-16">
-      <header className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-neutral-900">Manage items</h1>
-        <Link
-          href="/"
-          aria-label="Go to count screen"
-          className="flex min-h-11 items-center rounded-lg px-3 text-neutral-600 hover:bg-neutral-100"
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <path d="M9 22V12h6v10" />
-          </svg>
-        </Link>
+      <header>
+        <AppNav current="/items" />
+        <h1 className="mt-1 px-1 text-lg font-bold text-neutral-900">
+          Manage items
+        </h1>
       </header>
 
       <AddItem categories={categories} units={units} />
