@@ -79,7 +79,7 @@ export default function ItemRow({
     // nothing clips even with large phone text.
     <li className="border-t border-neutral-100 px-3 py-2.5">
       <div className="flex items-center gap-2">
-        <span className="truncate font-medium text-neutral-900">
+        <span className="min-w-0 font-medium text-neutral-900">
           {item.name}
         </span>
         {low && (

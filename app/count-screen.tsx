@@ -229,7 +229,7 @@ export default function CountScreen({
                         >
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="truncate font-medium text-neutral-900">
+                              <span className="min-w-0 font-medium text-neutral-900">
                                 {item.name}
                               </span>
                               {low && (
