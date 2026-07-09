@@ -228,7 +228,7 @@ export default function CountScreen({
                           className="flex items-center justify-between gap-3 border-t border-neutral-100 px-4 py-2"
                         >
                           <div className="min-w-0">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-baseline gap-2">
                               <span className="min-w-0 font-medium text-neutral-900">
                                 {item.name}
                               </span>

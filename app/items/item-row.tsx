@@ -78,7 +78,7 @@ export default function ItemRow({
     // Two-line layout: item info on top, actions on their own line below, so
     // nothing clips even with large phone text.
     <li className="border-t border-neutral-100 px-3 py-2.5">
-      <div className="flex items-center gap-2">
+      <div className="flex items-baseline gap-2">
         <span className="min-w-0 font-medium text-neutral-900">
           {item.name}
         </span>
