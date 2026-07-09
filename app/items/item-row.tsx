@@ -75,86 +75,89 @@ export default function ItemRow({
   }
 
   return (
-    <li className="flex items-center gap-2 border-t border-neutral-100 px-3 py-2.5">
-      {!archived && (
-        <div className="flex shrink-0 items-center">
-          <button
-            type="button"
-            onClick={() => onMove("up")}
-            disabled={isFirst || pending}
-            aria-label={`Move ${item.name} up`}
-            className="flex h-11 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
-          >
-            ↑
-          </button>
-          <button
-            type="button"
-            onClick={() => onMove("down")}
-            disabled={isLast || pending}
-            aria-label={`Move ${item.name} down`}
-            className="flex h-11 w-8 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
-          >
-            ↓
-          </button>
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="truncate font-medium text-neutral-900">
-            {item.name}
+    // Two-line layout: item info on top, actions on their own line below, so
+    // nothing clips even with large phone text.
+    <li className="border-t border-neutral-100 px-3 py-2.5">
+      <div className="flex items-center gap-2">
+        <span className="truncate font-medium text-neutral-900">
+          {item.name}
+        </span>
+        {low && (
+          <span className="shrink-0 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+            Reorder
           </span>
-          {low && (
-            <span className="shrink-0 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-              Reorder
-            </span>
-          )}
-        </div>
-        <div className="text-xs text-neutral-500">
-          {item.current_qty} {item.unit}
-          {item.critical_level != null &&
-            ` · reorder at ${item.critical_level}`}
-        </div>
+        )}
+      </div>
+      <div className="text-xs text-neutral-500">
+        {item.current_qty} {item.unit}
+        {item.critical_level != null &&
+          ` · reorder at ${item.critical_level}`}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
-        {archived ? (
-          <>
+      <div className="mt-2 flex items-center gap-2">
+        {!archived && (
+          <div className="flex items-center">
             <button
               type="button"
-              onClick={onRestore}
-              disabled={pending}
-              className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+              onClick={() => onMove("up")}
+              disabled={isFirst || pending}
+              aria-label={`Move ${item.name} up`}
+              className="flex h-11 w-9 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
             >
-              Restore
+              ↑
             </button>
             <button
               type="button"
-              onClick={onDelete}
-              disabled={pending}
-              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              onClick={() => onMove("down")}
+              disabled={isLast || pending}
+              aria-label={`Move ${item.name} down`}
+              className="flex h-11 w-9 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 disabled:opacity-25"
             >
-              Delete
+              ↓
             </button>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => setEditingId(item.id)}
-              className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={onArchive}
-              disabled={pending}
-              className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-            >
-              Archive
-            </button>
-          </>
+          </div>
         )}
+
+        <div className="ml-auto flex items-center gap-2">
+          {archived ? (
+            <>
+              <button
+                type="button"
+                onClick={onRestore}
+                disabled={pending}
+                className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:opacity-50"
+              >
+                Restore
+              </button>
+              <button
+                type="button"
+                onClick={onDelete}
+                disabled={pending}
+                className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              >
+                Delete
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setEditingId(item.id)}
+                className="flex min-h-11 items-center rounded-lg border border-neutral-300 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={onArchive}
+                disabled={pending}
+                className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              >
+                Archive
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </li>
   );

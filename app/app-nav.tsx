@@ -18,7 +18,7 @@ export default function AppNav({
   current: "/" | "/report" | "/items";
 }) {
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex flex-wrap items-center gap-1">
       {LINKS.map((l) => {
         const active = l.href === current;
         return (
