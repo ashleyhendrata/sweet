@@ -1,10 +1,40 @@
 // Shared domain types for the Sweetwaters inventory app.
 // These mirror the Postgres schema in supabase/migrations.
 
+// A team = one franchise/location. Staff join it with the team's join code.
+export type Team = {
+  id: string;
+  name: string;
+  join_code: string;
+  created_at: string;
+};
+
+// admins manage items & people; members count.
+export type Role = "admin" | "member";
+
+export type TeamMember = {
+  user_id: string;
+  team_id: string;
+  role: Role;
+  email: string;
+  created_at: string;
+};
+
+// The signed-in user's team context, loaded once per request.
+export type TeamContext = {
+  userId: string;
+  email: string;
+  teamId: string;
+  teamName: string;
+  joinCode: string;
+  role: Role;
+};
+
 export type Category = {
   id: string;
   name: string;
   sort_order: number;
+  team_id: string;
   created_at: string;
 };
 
@@ -20,6 +50,7 @@ export type Item = {
   archived: boolean;
   // manual position within its category (lower = higher up)
   sort_order: number;
+  team_id: string;
   created_at: string;
   updated_at: string;
 };

@@ -8,10 +8,19 @@ import {
   deleteItem,
   getCategories,
   getItemsGroupedByCategory,
+  getTeamContext,
   unarchiveItem,
   updateCategory,
   updateItem,
 } from "@/lib/db";
+
+// Managing items/categories is admin-only (members count on the home screen).
+// Cross-team isolation is enforced by RLS; this guards the within-team role.
+async function isAdmin(): Promise<boolean> {
+  const ctx = await getTeamContext();
+  return ctx?.role === "admin";
+}
+const NOT_ADMIN = "Only team admins can change items.";
 
 // After any change, refresh both the manage screen and the count screen (and
 // the report reads live data, so no cache to bust there).
@@ -93,6 +102,7 @@ async function nameTaken(
 // --- Items -----------------------------------------------------------------
 
 export async function addItem(formData: FormData): Promise<ActionResult> {
+  if (!(await isAdmin())) return { error: NOT_ADMIN };
   const name = str(formData, "name");
   if (!name) return { error: "Enter an item name." };
   try {
@@ -116,6 +126,7 @@ export async function addItem(formData: FormData): Promise<ActionResult> {
 }
 
 export async function editItem(formData: FormData): Promise<ActionResult> {
+  if (!(await isAdmin())) return { error: NOT_ADMIN };
   const id = str(formData, "id");
   const name = str(formData, "name");
   if (!id || !name) return { error: "Enter an item name." };
@@ -140,12 +151,14 @@ export async function editItem(formData: FormData): Promise<ActionResult> {
 }
 
 export async function archiveItemAction(id: string): Promise<void> {
+  if (!(await isAdmin())) return;
   if (!id) return;
   await archiveItem(id);
   revalidate();
 }
 
 export async function restoreItemAction(id: string): Promise<void> {
+  if (!(await isAdmin())) return;
   if (!id) return;
   await unarchiveItem(id);
   revalidate();
@@ -153,6 +166,7 @@ export async function restoreItemAction(id: string): Promise<void> {
 
 /** Permanently delete an item. Guarded by a confirm dialog in the UI. */
 export async function deleteItemAction(id: string): Promise<void> {
+  if (!(await isAdmin())) return;
   if (!id) return;
   await deleteItem(id);
   revalidate();
@@ -166,6 +180,7 @@ export async function moveItem(
   id: string,
   direction: "up" | "down",
 ): Promise<void> {
+  if (!(await isAdmin())) return;
   const groups = await getItemsGroupedByCategory();
   for (const g of groups) {
     const idx = g.items.findIndex((it) => it.id === id);
@@ -184,6 +199,7 @@ export async function moveItem(
 // --- Categories ------------------------------------------------------------
 
 export async function addCategory(formData: FormData): Promise<ActionResult> {
+  if (!(await isAdmin())) return { error: NOT_ADMIN };
   const name = str(formData, "name");
   if (!name) return { error: "Enter a category name." };
   try {
@@ -200,6 +216,7 @@ export async function addCategory(formData: FormData): Promise<ActionResult> {
 export async function renameCategory(
   formData: FormData,
 ): Promise<ActionResult> {
+  if (!(await isAdmin())) return { error: NOT_ADMIN };
   const id = str(formData, "id");
   const name = str(formData, "name");
   if (!id || !name) return { error: "Enter a category name." };
@@ -221,6 +238,7 @@ export async function moveCategory(
   id: string,
   direction: "up" | "down",
 ): Promise<void> {
+  if (!(await isAdmin())) return;
   const groups = await getItemsGroupedByCategory(); // ordered by sort_order
   const cats = groups.filter((g) => g.items.length > 0);
   const idx = cats.findIndex((c) => c.id === id);

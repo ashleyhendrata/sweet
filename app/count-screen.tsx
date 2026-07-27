@@ -10,8 +10,12 @@ const SAVE_DEBOUNCE_MS = 500;
 
 export default function CountScreen({
   groups,
+  teamName,
+  isAdmin,
 }: {
   groups: CategoryWithItems[];
+  teamName: string;
+  isAdmin: boolean;
 }) {
   // Live quantities, seeded from the server. This is the source of truth for
   // display so +/- and typing feel instant (optimistic); saves are debounced.
@@ -107,7 +111,10 @@ export default function CountScreen({
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
       {/* Top bar */}
       <header className="px-3 py-2">
-        <AppNav current="/" />
+        <AppNav current="/" isAdmin={isAdmin} />
+        <p className="px-1 pt-1 text-sm font-semibold text-neutral-900">
+          {teamName}
+        </p>
       </header>
 
       {/* Sticky: reorder banner + search, always reachable behind the counter */}
@@ -154,15 +161,23 @@ export default function CountScreen({
             <p className="text-base font-medium text-neutral-900">
               No items yet
             </p>
-            <p className="mt-1 text-sm text-neutral-500">
-              Add what you want to track, then come back here to count.
-            </p>
-            <Link
-              href="/items"
-              className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-neutral-900 px-5 text-sm font-semibold text-white hover:bg-neutral-700"
-            >
-              Go to Manage
-            </Link>
+            {isAdmin ? (
+              <>
+                <p className="mt-1 text-sm text-neutral-500">
+                  Add what you want to track, then come back here to count.
+                </p>
+                <Link
+                  href="/items"
+                  className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-neutral-900 px-5 text-sm font-semibold text-white hover:bg-neutral-700"
+                >
+                  Go to Manage
+                </Link>
+              </>
+            ) : (
+              <p className="mt-1 text-sm text-neutral-500">
+                Ask your team admin to add items to count.
+              </p>
+            )}
           </div>
         ) : (
           visibleGroups.map((group) => {

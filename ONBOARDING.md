@@ -2,15 +2,15 @@
 
 _Tape this by the register. If you can use a phone, you can do a count._
 
-**Website:** ____________________________  **Login:** ____________________________
-**Password:** ____________________________  _(ask your manager if blank)_
+**Website:** ____________________________  **Team code:** ____________________________
 
 ---
 
-## 1. Log in
+## 1. Create your account (first time only)
 1. Open the website link above on your phone.
-2. Type the shared **email** and **password**.
-3. Tap **Sign in**. You'll stay logged in — no need to do this every time.
+2. Tap **Create an account** — use your own email and pick your own password.
+3. Type the **team code** above to join our store.
+4. That's it — you'll stay logged in. (Forgot your password? Tap **Forgot password?** on the sign-in page.)
 
 ## 2. Do a count (the daily job)
 You'll land on the **Count** screen. Items are grouped by category.
@@ -38,7 +38,10 @@ A red **REORDER** badge means that item is **at or below its reorder level — w
 - Want a **blank sheet to write counts on by hand?** Change **Layout → Blank checklist** before printing.
 
 ## Need to add or fix an item?
-Tap **Manage** (top-right) to add, edit, archive, or reorder items and categories. **Archive** seasonal items rather than deleting them — deleting is permanent. When in doubt, ask your manager.
+If you're an **admin**, tap **Manage** to add, edit, archive, or reorder items and categories. **Archive** seasonal items rather than deleting them — deleting is permanent. (Counters won't see Manage — ask your manager for changes.)
+
+## The Team tab
+Shows who's on the team and the **team code** for new hires. Admins can promote people or make a new code.
 
 ---
 _Questions? Ask a shift lead. Thanks for keeping us stocked! ☕_

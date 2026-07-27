@@ -1,7 +1,9 @@
+import { redirect } from "next/navigation";
 import {
   getArchivedItems,
   getCategories,
   getItemsGroupedByCategory,
+  getTeamContext,
 } from "@/lib/db";
 import AddItem from "./add-item";
 import AppNav from "../app-nav";
@@ -10,9 +12,13 @@ import CategorySection from "./category-section";
 import { EditProvider } from "./edit-context";
 import ItemRow from "./item-row";
 
-// Manage screen: add/edit/archive items and manage categories. Reads are done
-// on the server; every row's actions revalidate this page and the count screen.
+// Manage screen: add/edit/archive items and manage categories. Admin-only —
+// members count on the home screen but don't change the item list.
 export default async function ItemsPage() {
+  const ctx = await getTeamContext();
+  if (!ctx) redirect("/welcome");
+  if (ctx.role !== "admin") redirect("/");
+
   const [categories, groups, archived] = await Promise.all([
     getCategories(),
     getItemsGroupedByCategory(),
@@ -32,7 +38,7 @@ export default async function ItemsPage() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 p-4 pb-16">
       <header>
-        <AppNav current="/items" />
+        <AppNav current="/items" isAdmin />
       </header>
 
       {/* Plain-language intro for a first-time, non-technical user. */}

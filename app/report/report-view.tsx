@@ -58,10 +58,14 @@ export default function ReportView({
   groups,
   lowItems,
   location,
+  teamName,
+  isAdmin,
 }: {
   groups: CategoryWithItems[];
   lowItems: ItemWithCategory[];
   location: string;
+  teamName: string;
+  isAdmin: boolean;
 }) {
   const [sort, setSort] = useState<SortMode>("category");
   // "full" = the report with counts; "blank" = a names-only checklist to print.
@@ -95,7 +99,7 @@ export default function ReportView({
       {/* Screen-only toolbar */}
       <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white px-4 py-3 print:hidden">
         <div className="mx-auto max-w-[8.25in]">
-          <AppNav current="/report" />
+          <AppNav current="/report" isAdmin={isAdmin} />
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-neutral-600">
               Layout
@@ -141,7 +145,9 @@ export default function ReportView({
         {layout === "full" ? (
           <header className="report-header avoid-break">
             <h1 className="report-title">Inventory Report</h1>
-            <p className="report-location">{location} · The Grove</p>
+            <p className="report-location">
+              {location} · {teamName}
+            </p>
             <p className="report-summary">
               {totalItems} item{totalItems === 1 ? "" : "s"} ·{" "}
               {inventory.length} categor
@@ -309,7 +315,9 @@ export default function ReportView({
           </section>
         )}
 
-        <footer className="report-footer">{location} · The Grove</footer>
+        <footer className="report-footer">
+          {location} · {teamName}
+        </footer>
       </article>
     </div>
   );

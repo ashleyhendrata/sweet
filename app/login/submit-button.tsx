@@ -2,9 +2,15 @@
 
 import { useFormStatus } from "react-dom";
 
-// Gives the shared-login form a clear pending state so a new hire on a slow
-// connection sees that their tap registered.
-export default function SubmitButton() {
+// Auth-form submit button with a clear pending state so a tap on a slow
+// connection visibly registers. Labels configurable for login/signup/reset.
+export default function SubmitButton({
+  label = "Sign in",
+  pendingLabel = "Signing in…",
+}: {
+  label?: string;
+  pendingLabel?: string;
+}) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -12,7 +18,7 @@ export default function SubmitButton() {
       disabled={pending}
       className="min-h-12 w-full rounded-lg bg-neutral-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-neutral-700 active:bg-neutral-800 disabled:opacity-60"
     >
-      {pending ? "Signing in…" : "Sign in"}
+      {pending ? pendingLabel : label}
     </button>
   );
 }

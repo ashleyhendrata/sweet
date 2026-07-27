@@ -5,7 +5,14 @@ import { NextResponse, type NextRequest } from "next/server";
 // every matched request: it refreshes the Supabase session cookie and gates the
 // app behind the shared staff login.
 
-const PUBLIC_PATHS = ["/login"];
+// Reachable while signed out. /auth covers the email-link callback route.
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/auth",
+];
 
 export async function proxy(request: NextRequest) {
   // Response we mutate as Supabase refreshes auth cookies.
@@ -47,8 +54,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Already signed in but sitting on /login -> send to the count screen.
-  if (user && pathname.startsWith("/login")) {
+  // Already signed in but sitting on the login/signup forms -> count screen.
+  if (
+    user &&
+    (pathname.startsWith("/login") || pathname.startsWith("/signup"))
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);

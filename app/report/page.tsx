@@ -1,4 +1,5 @@
-import { getReportData } from "@/lib/db";
+import { redirect } from "next/navigation";
+import { getReportData, getTeamContext } from "@/lib/db";
 import ReportView from "./report-view";
 
 const LOCATION =
@@ -8,6 +9,17 @@ const LOCATION =
 // sorting + printing are handled client-side in ReportView. Designed so a
 // printed copy doubles as a physical count sheet (blank write-in column).
 export default async function ReportPage() {
+  const ctx = await getTeamContext();
+  if (!ctx) redirect("/welcome");
+
   const { lowItems, groups } = await getReportData();
-  return <ReportView groups={groups} lowItems={lowItems} location={LOCATION} />;
+  return (
+    <ReportView
+      groups={groups}
+      lowItems={lowItems}
+      location={LOCATION}
+      teamName={ctx.teamName}
+      isAdmin={ctx.role === "admin"}
+    />
+  );
 }

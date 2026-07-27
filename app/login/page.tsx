@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { login } from "./actions";
 import SubmitButton from "./submit-button";
 
@@ -68,6 +69,26 @@ export default async function LoginPage({
           </div>
 
           <SubmitButton />
+
+          <div className="space-y-1 text-center text-sm text-neutral-500">
+            <p>
+              <Link
+                href="/forgot-password"
+                className="font-medium text-neutral-900 underline"
+              >
+                Forgot password?
+              </Link>
+            </p>
+            <p>
+              New here?{" "}
+              <Link
+                href="/signup"
+                className="font-medium text-neutral-900 underline"
+              >
+                Create an account
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </main>

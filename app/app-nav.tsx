@@ -4,22 +4,25 @@ import Link from "next/link";
 import { logout } from "./login/actions";
 
 // Consistent, labeled top nav shown on every screen so it's always obvious how
-// to get between Count, Report, and Manage (labels over icons — a bare "home"
-// icon wasn't recognizable). The current screen is highlighted.
+// to get between screens (labels over icons — a bare "home" icon wasn't
+// recognizable). The current screen is highlighted. Manage is admin-only.
 const LINKS = [
-  { href: "/", label: "Count" },
-  { href: "/report", label: "Report" },
-  { href: "/items", label: "Manage" },
+  { href: "/", label: "Count", adminOnly: false },
+  { href: "/report", label: "Report", adminOnly: false },
+  { href: "/items", label: "Manage", adminOnly: true },
+  { href: "/team", label: "Team", adminOnly: false },
 ] as const;
 
 export default function AppNav({
   current,
+  isAdmin,
 }: {
-  current: "/" | "/report" | "/items";
+  current: "/" | "/report" | "/items" | "/team";
+  isAdmin: boolean;
 }) {
   return (
     <nav className="flex flex-wrap items-center gap-1">
-      {LINKS.map((l) => {
+      {LINKS.filter((l) => isAdmin || !l.adminOnly).map((l) => {
         const active = l.href === current;
         return (
           <Link

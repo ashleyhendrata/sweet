@@ -6,6 +6,9 @@ import type {
   CategoryWithItems,
   Item,
   ItemWithCategory,
+  Role,
+  TeamContext,
+  TeamMember,
 } from "@/lib/types";
 
 /**
@@ -40,6 +43,146 @@ export async function getCurrentUser() {
 }
 
 // ---------------------------------------------------------------------------
+// Teams & membership
+// ---------------------------------------------------------------------------
+
+/**
+ * The signed-in user's team context (team + role), or null if they're signed
+ * in but haven't joined/created a franchise yet. Pages use this to gate:
+ * no user -> proxy sends to /login; no membership -> redirect to /welcome.
+ */
+export async function getTeamContext(): Promise<TeamContext | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("role, team_id, teams(name, join_code)")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+
+  const team = data.teams as unknown as { name: string; join_code: string };
+  return {
+    userId: user.id,
+    email: user.email ?? "",
+    teamId: data.team_id,
+    teamName: team?.name ?? "",
+    joinCode: team?.join_code ?? "",
+    role: data.role as Role,
+  };
+}
+
+/** The signed-in user's team id; throws if they haven't joined a team. */
+async function currentTeamId(): Promise<string> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("No team membership.");
+
+  // Must filter by user_id explicitly: RLS on memberships lets a member see
+  // every row for their team (the member list), not just their own, so an
+  // unfiltered query here returns one row per teammate and .maybeSingle()
+  // throws once a team has more than one person.
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("team_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error("No team membership.");
+  return data.team_id;
+}
+
+/** Create a franchise and become its admin. Returns the join code to share. */
+export async function createTeam(
+  name: string,
+): Promise<{ teamId: string; name: string; joinCode: string }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_team_with_admin", {
+    team_name: name,
+  });
+  if (error) throw error;
+  return {
+    teamId: data.team_id,
+    name: data.name,
+    joinCode: data.join_code,
+  };
+}
+
+/** Join an existing franchise with its code (auto-join as a counter). */
+export async function joinTeam(
+  code: string,
+): Promise<{ teamId: string; name: string }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("join_team_with_code", { code });
+  if (error) throw error;
+  return { teamId: data.team_id, name: data.name };
+}
+
+/** Rotate the team's join code (admin only, enforced in the database). */
+export async function regenerateJoinCode(): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("regenerate_join_code");
+  if (error) throw error;
+  return data as string;
+}
+
+/** Rename the signed-in user's team (RLS restricts this to team admins). */
+export async function renameTeam(name: string): Promise<void> {
+  const supabase = await createClient();
+  const teamId = await currentTeamId();
+  const { error } = await supabase
+    .from("teams")
+    .update({ name })
+    .eq("id", teamId);
+  if (error) throw error;
+}
+
+/** Everyone on the signed-in user's team (RLS scopes to the team). */
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Change a teammate's role (RLS restricts this to team admins). */
+export async function setMemberRole(userId: string, role: Role): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("memberships")
+    .update({ role })
+    .eq("user_id", userId);
+  if (error) throw error;
+}
+
+/** Remove a teammate (RLS restricts this to team admins). */
+export async function removeMember(userId: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("memberships")
+    .delete()
+    .eq("user_id", userId);
+  if (error) throw error;
+}
+
+/** Leave the signed-in user's team (blocked if they're the team's only admin). */
+export async function leaveTeam(): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("leave_team");
+  if (error) throw error;
+}
+
+// ---------------------------------------------------------------------------
 // Categories
 // ---------------------------------------------------------------------------
 
@@ -59,9 +202,10 @@ export async function createCategory(input: {
   sort_order?: number;
 }): Promise<Category> {
   const supabase = await createClient();
+  const team_id = await currentTeamId();
   const { data, error } = await supabase
     .from("categories")
-    .insert({ name: input.name, sort_order: input.sort_order ?? 0 })
+    .insert({ name: input.name, sort_order: input.sort_order ?? 0, team_id })
     .select("*")
     .single();
   if (error) throw error;
@@ -163,6 +307,7 @@ export async function createItem(input: {
   current_qty?: number;
 }): Promise<Item> {
   const supabase = await createClient();
+  const team_id = await currentTeamId();
   // Append new items to the end of their category's manual order.
   const { data: last } = await supabase
     .from("items")
@@ -182,6 +327,7 @@ export async function createItem(input: {
       critical_level: input.critical_level,
       current_qty: input.current_qty ?? 0,
       sort_order,
+      team_id,
     })
     .select("*")
     .single();
