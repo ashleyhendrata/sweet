@@ -6,6 +6,9 @@ import { logout } from "./login/actions";
 // Consistent, labeled top nav shown on every screen so it's always obvious how
 // to get between screens (labels over icons — a bare "home" icon wasn't
 // recognizable). The current screen is highlighted. Manage is admin-only.
+// Sign out also lives on the Team page: on narrow screens (or with larger
+// system text) a trailing nav button is the first thing to wrap onto its own
+// line, so it's hidden here below the `sm` breakpoint and shown from `sm` up.
 const LINKS = [
   { href: "/", label: "Count", adminOnly: false },
   { href: "/report", label: "Report", adminOnly: false },
@@ -39,7 +42,7 @@ export default function AppNav({
           </Link>
         );
       })}
-      <form action={logout} className="ml-auto">
+      <form action={logout} className="ml-auto hidden sm:block">
         <button
           type="submit"
           className="flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-neutral-500 hover:bg-neutral-100"

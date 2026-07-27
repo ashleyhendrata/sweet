@@ -36,7 +36,7 @@ export default async function ItemsPage() {
   ).sort((a, b) => a.localeCompare(b));
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 p-4 pb-16">
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 p-4 pb-16 sm:max-w-[8.25in]">
       <header>
         <AppNav current="/items" isAdmin />
       </header>

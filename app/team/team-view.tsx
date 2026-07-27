@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { logout } from "../login/actions";
 import {
   changeMemberRole,
   leaveTeam,
@@ -228,20 +229,24 @@ export default function TeamView({
         )}
       </section>
 
-      {/* Switch stores */}
+      {/* Account */}
       <section className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex min-h-11 w-full items-center rounded-lg px-3 -mx-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+          >
+            Sign out
+          </button>
+        </form>
         <button
           type="button"
           disabled={pending}
           onClick={onLeave}
-          className="flex min-h-11 items-center rounded-lg px-3 -mx-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="flex min-h-11 w-full items-center rounded-lg px-3 -mx-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
         >
           Leave this store
         </button>
-        <p className="mt-1 text-xs text-neutral-500">
-          Joined the wrong store, or switching locations? Leave to join or
-          create a different one.
-        </p>
       </section>
     </div>
   );

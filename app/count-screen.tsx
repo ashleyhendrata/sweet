@@ -108,7 +108,7 @@ export default function CountScreen({
   const hasAnyItems = groups.some((g) => g.items.length > 0);
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+    <div className="mx-auto flex w-full max-w-md flex-1 flex-col sm:max-w-[8.25in]">
       {/* Top bar */}
       <header className="px-3 py-2">
         <AppNav current="/" isAdmin={isAdmin} />
