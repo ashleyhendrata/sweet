@@ -149,4 +149,17 @@ join public.categories c
   on c.name = v.category
   and c.team_id = (select id from public.teams order by created_at limit 1);
 
+-- The insert above doesn't set sort_order, so every row just took the column
+-- default (0) — leaving every item in a category tied. Number them here
+-- instead, so the Manage screen's up/down arrows have distinct positions to
+-- swap right away rather than only after each row's been touched once.
+with ordered as (
+  select id, row_number() over (partition by category_id order by name) as rn
+  from public.items
+  where team_id = (select id from public.teams order by created_at limit 1)
+)
+update public.items i set sort_order = o.rn
+from ordered o
+where o.id = i.id;
+
 commit;

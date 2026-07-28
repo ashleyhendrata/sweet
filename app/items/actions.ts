@@ -189,8 +189,13 @@ export async function moveItem(
     if (swapIdx < 0 || swapIdx >= g.items.length) return;
     const a = g.items[idx];
     const b = g.items[swapIdx];
-    await updateItem(a.id, { sort_order: b.sort_order });
-    await updateItem(b.id, { sort_order: a.sort_order });
+    // Assign each row the other's array position rather than swapping their
+    // existing sort_order values: two items can share the same sort_order
+    // (e.g. freshly-seeded data that never set one, all defaulting to 0), and
+    // swapping equal values is a no-op — the row silently doesn't move.
+    // Positions are always distinct, so this always produces a real change.
+    await updateItem(a.id, { sort_order: swapIdx });
+    await updateItem(b.id, { sort_order: idx });
     revalidate();
     return;
   }
@@ -247,7 +252,8 @@ export async function moveCategory(
 
   const a = cats[idx];
   const b = cats[swapIdx];
-  await updateCategory(a.id, { sort_order: b.sort_order });
-  await updateCategory(b.id, { sort_order: a.sort_order });
+  // Positions, not existing values — see the comment in moveItem.
+  await updateCategory(a.id, { sort_order: swapIdx });
+  await updateCategory(b.id, { sort_order: idx });
   revalidate();
 }
