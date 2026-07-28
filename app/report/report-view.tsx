@@ -57,13 +57,11 @@ function ItemRow({
 export default function ReportView({
   groups,
   lowItems,
-  location,
   teamName,
   isAdmin,
 }: {
   groups: CategoryWithItems[];
   lowItems: ItemWithCategory[];
-  location: string;
   teamName: string;
   isAdmin: boolean;
 }) {
@@ -145,9 +143,7 @@ export default function ReportView({
         {layout === "full" ? (
           <header className="report-header avoid-break">
             <h1 className="report-title">Inventory Report</h1>
-            <p className="report-location">
-              {location} · {teamName}
-            </p>
+            <p className="report-location">{teamName}</p>
             <p className="report-summary">
               {totalItems} item{totalItems === 1 ? "" : "s"} ·{" "}
               {inventory.length} categor
@@ -193,7 +189,7 @@ export default function ReportView({
             <p className="all-good">✓ Nothing needs ordering.</p>
           ) : (
             <div className="needs-ordering-wrap">
-              <table className="report-table">
+              <table className="report-table inv-table">
                 <thead>
                   <tr>
                     <th>Item</th>
@@ -315,9 +311,7 @@ export default function ReportView({
           </section>
         )}
 
-        <footer className="report-footer">
-          {location} · {teamName}
-        </footer>
+        <footer className="report-footer">{teamName}</footer>
       </article>
     </div>
   );

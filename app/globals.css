@@ -46,6 +46,18 @@ body {
     0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
+/* The paper-style side padding above is sized for a wide screen (it's meant
+   to look like page margins). On a phone that same fixed inch-based padding
+   eats a big share of the width and forces the tables to wrap constantly, so
+   it's cut way down below this width — the tables need the room more than
+   the sheet needs to look like paper. */
+@media (max-width: 640px) {
+  .report-sheet {
+    margin: 12px auto;
+    padding: 20px 12px 24px;
+  }
+}
+
 /* --- Header --- */
 .report-header {
   text-align: center;
