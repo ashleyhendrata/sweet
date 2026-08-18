@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { saveItemQty } from "./actions";
 import AppNav from "./app-nav";
-import { isLow, type CategoryWithItems } from "@/lib/types";
+import { formatUnit, isLow, type CategoryWithItems } from "@/lib/types";
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -254,7 +254,7 @@ export default function CountScreen({
                               )}
                             </div>
                             <div className="text-xs text-neutral-500">
-                              {item.unit}
+                              {formatUnit(qty, item.unit)}
                               {item.critical_level != null &&
                                 ` · reorder at ${item.critical_level}`}
                             </div>

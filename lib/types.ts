@@ -73,3 +73,24 @@ export function isLow(
 ): boolean {
   return item.critical_level != null && item.current_qty <= item.critical_level;
 }
+
+// Singularizes the last plural-looking word of a unit ("boxes" -> "box",
+// "cases of 500" -> "case of 500", "32oz bottles" -> "32oz bottle") when qty
+// is exactly 1. Units are free-typed, so this is a heuristic, not a dictionary.
+function singularizeWord(word: string): string {
+  if (/(ches|shes|xes)$/i.test(word)) return word.slice(0, -2);
+  if (/[^aeiou]ies$/i.test(word)) return word.slice(0, -3) + "y";
+  if (/s$/i.test(word) && !/ss$/i.test(word)) return word.slice(0, -1);
+  return word;
+}
+
+export function formatUnit(qty: number, unit: string): string {
+  if (qty !== 1) return unit;
+  const ofIndex = unit.indexOf(" of ");
+  if (ofIndex !== -1) {
+    return singularizeWord(unit.slice(0, ofIndex)) + unit.slice(ofIndex);
+  }
+  const lastSpace = unit.lastIndexOf(" ");
+  if (lastSpace === -1) return singularizeWord(unit);
+  return unit.slice(0, lastSpace + 1) + singularizeWord(unit.slice(lastSpace + 1));
+}

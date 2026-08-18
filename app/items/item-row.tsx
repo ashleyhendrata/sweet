@@ -9,7 +9,7 @@ import {
   restoreItemAction,
 } from "./actions";
 import { useEdit } from "./edit-context";
-import { isLow, type Category, type Item } from "@/lib/types";
+import { formatUnit, isLow, type Category, type Item } from "@/lib/types";
 
 // Reorder arrows, shared between the next-to-name spot (wide screens) and the
 // actions row (phones) so they only need to be wired up once.
@@ -144,7 +144,7 @@ export default function ItemRow({
         )}
       </div>
       <div className="text-xs text-neutral-500">
-        {item.current_qty} {item.unit}
+        {item.current_qty} {formatUnit(item.current_qty, item.unit)}
         {item.critical_level != null &&
           ` · reorder at ${item.critical_level}`}
       </div>

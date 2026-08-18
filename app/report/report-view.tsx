@@ -5,6 +5,7 @@ import AppNav from "../app-nav";
 import PrintButton from "./print-button";
 import ReportDate from "./report-date";
 import {
+  formatUnit,
   isLow,
   type CategoryWithItems,
   type ItemWithCategory,
@@ -49,7 +50,7 @@ function ItemRow({
       </td>
       {withCategory && <td>{item.category_name}</td>}
       <td className="num">{item.current_qty}</td>
-      <td>{item.unit}</td>
+      <td>{formatUnit(item.current_qty, item.unit)}</td>
     </tr>
   );
 }
@@ -204,7 +205,7 @@ export default function ReportView({
                     <tr key={item.id}>
                       <td className="item-name">{item.name}</td>
                       <td className="num">{item.current_qty}</td>
-                      <td>{item.unit}</td>
+                      <td>{formatUnit(item.current_qty, item.unit)}</td>
                       <td className="num hidden print:table-cell">
                         {item.critical_level}
                       </td>
