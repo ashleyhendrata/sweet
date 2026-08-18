@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+const subscribe = () => () => {};
 
 // Rendered on the client so the date/time reflect the counter's local timezone
 // at the moment they open the report (avoids a server/UTC mismatch).
 export default function ReportDate() {
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => setNow(new Date()), []);
+  const now = useSyncExternalStore(
+    subscribe,
+    () => new Date(),
+    () => null,
+  );
 
   if (!now) return <span suppressHydrationWarning>&nbsp;</span>;
 
